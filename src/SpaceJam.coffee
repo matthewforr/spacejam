@@ -39,11 +39,11 @@ class SpaceJam
     SpaceJam.opts = require("rc")("spacejam",SpaceJam.defaultOpts())
 
     command = SpaceJam.opts._[0]
-    if _.has(runCommands,command)
-      runCommands[command](SpaceJam.opts)
+    if _.has(commandList,command)
+      commandList[command](SpaceJam.opts)
     else
       log.error "\n'#{command}' is not a spacejam command\n" if command
-      runCommands.help()
+      commandList.help()
 
 
 
@@ -87,6 +87,12 @@ class SpaceJam
       setTimeout(->
         throw new Error("Testing spacejam crash")
       ,+opts["crash-spacejam-after"])
+
+
+  runCommand = (opts)->
+    log.debug "SpaceJam.runCommand()",arguments
+    expect(opts).to.be.an "object"
+
 
 
 
@@ -221,8 +227,9 @@ For additional usage info, please visit https://github.com/spacejamio/spacejam
 
 
 
-  runCommands = {
+  commandList = {
     "test-packages" : testPackages
+    "run-command"   : runCommand
     "help"          : printHelp
   }
 

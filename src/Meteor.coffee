@@ -35,6 +35,7 @@ class Meteor extends EventEmitter
       "production"  : false
       "production"  : false
       "once"        : false
+      "app"         : "."
     }
 
 
@@ -49,7 +50,7 @@ class Meteor extends EventEmitter
   # See baseOpts why it is a function an not an object.
   testPackagesOpts: ->
     {
-      "app": "."
+
       "app-packages": true #TODO Add Support for testing all packages within an app that are not symlinks
       "timeout": 120000 # 2 minutes
       "meteor-ready-text": "=> App running at:"
@@ -152,7 +153,29 @@ class Meteor extends EventEmitter
       @hasErrorText data
 
 
+  runCommand: (opts)->
+    log.debug "Meteor.runCommand()"
+    log.info("Spawning meteor")
+    expect(opts,"@opts should be an object.").to.be.an "object"
 
+    expect(@childProcess,"Meteor's child process is already running").to.be.null
+    # @trunCommandOpts overwrite @baseOpts
+    @opts = _.extend( opts, @baseOpts() )
+
+    @opts = require("rc")("spacejam",@opts)
+
+    env = process.env
+
+    #
+    #
+
+    options = {
+      cwd: @opts["app"],
+      env: env,
+      detached:false
+    }
+    @childProcess = new ChildProcess()
+    @childProcess.spawn("meteor",[],options)
 
 
   @getDefaultRootUrl: (port)->
