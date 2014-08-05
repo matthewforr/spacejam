@@ -40,7 +40,6 @@ describe "SpaceJam Test", ->
       spacejamChild = null
 
 
-
   it "Run with with default options and no env, outside a Meteor app", (done)->
     @timeout 30000
     spacejamChild = new ChildProcess()
@@ -220,4 +219,15 @@ describe "SpaceJam Test", ->
     spacejamChild.spawn(spacejamBin,args,{cwd:testApp2})
     spacejamChild.child.on "exit", (code) =>
       expect(code).to.equal SpaceJam.ERR_CODE.METEOR_ERROR
+      done()
+
+
+  it.only "runCLICommand throws error if --command is not present", (done)->
+    @timeout 30000
+    spacejamChild = new ChildProcess()
+    args = ["cli"]
+
+    spacejamChild.spawn(spacejamBin,args)
+    spacejamChild.child.on "exit", (code) ->
+      expect(code).to.equal 1
       done()

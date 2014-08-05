@@ -153,31 +153,6 @@ class Meteor extends EventEmitter
       @hasErrorText data
 
 
-  runCommand: (opts)->
-    log.debug "Meteor.runCommand()"
-    log.info("Spawning meteor")
-    expect(opts,"@opts should be an object.").to.be.an "object"
-
-    expect(@childProcess,"Meteor's child process is already running").to.be.null
-    # @trunCommandOpts overwrite @baseOpts
-    @opts = _.extend( opts, @baseOpts() )
-
-    @opts = require("rc")("spacejam",@opts)
-
-    env = process.env
-
-    #
-    #
-
-    options = {
-      cwd: @opts["app"],
-      env: env,
-      detached:false
-    }
-    @childProcess = new ChildProcess()
-    @childProcess.spawn("meteor",[],options)
-
-
   @getDefaultRootUrl: (port)->
     log.debug "Meteor.getDefaultRootUrl()",arguments
     if port
@@ -225,6 +200,14 @@ class Meteor extends EventEmitter
 
     return matchedPackages
 
+
+  runCommand: (args) =>
+    @childProcess.spawn("meteor",args)
+
+
+  runOnce: =>
+    args = ["--once"]
+    runCommmand args
 
 
   hasErrorText: ( buffer )=>

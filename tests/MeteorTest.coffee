@@ -271,17 +271,6 @@ describe "Meteor class Test", ->
         ,500
 
 
-  it.only "Runs meteor runCommand", ->
-    process.argv = process.argv.concat [ "--app", "app", "arg1", "arg2", "arg3" ]
-    meteor.runCommand({})
-    expectedSpawnArgs = []
-    _env2 = _.extend({},process.env)
-    _env2.METEOR_SETTINGS = JSON.stringify({args: [ "arg1", "arg2", "arg3" ]})
-    expectedSpawnOptions = { cwd: "app", detached: false, env: _env2 }
-    expect(spawnStub.args[0]).to.eql(["meteor",expectedSpawnArgs,expectedSpawnOptions])
-
-
-
 lookUpMongodChilds =(pid,cb)->
     ps.lookup
       command: 'mongod',

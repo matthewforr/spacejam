@@ -89,12 +89,31 @@ class SpaceJam
       ,+opts["crash-spacejam-after"])
 
 
-  runCommand = (opts)->
-    log.debug "SpaceJam.runCommand()",arguments
+
+  runCLICommand = (opts)->
+    log.debug "SpaceJam.runCLICommand()", arguments
     expect(opts).to.be.an "object"
 
+    if !opts.command
+      process.stdout.write "Command is required\n"
+      #printHelp()
+      killChildren 1
 
+    commandLine = process.argv.slice(3, process.argv.length).join(" ")
 
+    meteorSettings = null
+
+    if process.env.METEOR_SETTINGS
+      meteorSettings = JSON.parse(process.env.METEOR_SETTINGS)
+      meteorSettings["commandLine"] = commandLine
+    else
+      meteorSettings = { commandLine: commandLine }
+
+    process.env.METEOR_SETTINGS = JSON.stringify meteorSettings
+
+    #SpaceJam.meteor = Meteor.exec()
+
+    
 
   runPhantom=(url)->
     log.debug "SpaceJam.runPhantom()",arguments
@@ -124,7 +143,6 @@ class SpaceJam
     SpaceJam.exitCode = code
 
 
-
   #Kill all running child_process instances
   killChildren=(code = 1)->
     log.debug "SpaceJam.killChildren()",arguments
@@ -135,7 +153,6 @@ class SpaceJam
     exit(code)
 
 
-  
   printHelp =->
     process.stdout.write(
       """
@@ -229,7 +246,7 @@ For additional usage info, please visit https://github.com/spacejamio/spacejam
 
   commandList = {
     "test-packages" : testPackages
-    "run-command"   : runCommand
+    "cli"           : runCLICommand
     "help"          : printHelp
   }
 
